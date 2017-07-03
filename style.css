@@ -1,0 +1,8 @@
+body {
+  background-color: #000000;
+  color: #ffffff;
+}
+#clock {
+  padding: 5px;
+  font-size: 180pt;
+}

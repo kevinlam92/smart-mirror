@@ -1,0 +1,73 @@
+body {
+  background-color: #000000;
+  color: #ffffff;
+  font-family: 'Open Sans', sans-serif;
+}
+
+#container {
+  //position: absolute;
+  width: 100%;
+  padding: 30px;
+}
+
+#clock {
+  padding: 5px;
+  line-height: 280px;
+}
+
+.hour {
+  font-size: 280px;
+  margin-right: 15px;
+}
+
+.minute {
+  font-size: 190px;
+  vertical-align: text-bottom;
+}
+
+#location {
+  margin-left: 350px;
+  margin-top: -70px;
+  font-size: 30px;
+  font-weight: 300;
+}
+
+#weather {
+  position: absolute;
+  right: 75px;
+  top: 75px;
+  color: #000;
+  background-color: #000;
+  z-index: 0;
+}
+
+#weather .icon-container {
+}
+
+#weather .weather-container {
+  margin-top: 20px;
+  font-size: 30px;
+  font-weight: 300;
+  color: #fff;
+  width: 100%;
+  text-align: center;
+}
+
+#weather .weather-container .temp:after {
+  content : " \B0 C";
+}
+
+
+#footer {
+  position: absolute;
+  bottom: 30px;
+  width: 95%;
+}
+.left {
+  left: 0px;
+  text-align: left;
+}
+.right {
+  right: 0px;
+  text-align: right;
+}

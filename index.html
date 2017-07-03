@@ -1,0 +1,109 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="res/weather.css"/>
+<script src="res/jquery-3.2.1.min.js"></script>
+<link rel="stylesheet" href="res/jquery-ui-1.12.1/jquery-ui.min.css"/>
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+<script src="res/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+<script src="res/config.js"></script>
+
+
+<link rel="stylesheet" type="text/css" href="res/style.css"/>
+</head>
+
+<body>
+
+<script>
+$().ready(function(){
+  setInterval(function(){
+    var currentTime = new Date();
+    var hr = currentTime.getHours();
+    var min = currentTime.getMinutes();
+
+    hr = (hr < 10 ? "0" : "") + hr;
+    min = (min < 10 ? "0" : "") + min;
+    $(".hour").text(hr);
+    $(".minute").text(min);
+
+  },1000);
+});
+
+if(navigator.geolocation) {
+ navigator.geolocation.getCurrentPosition(cb);
+}
+
+function cb(pos) {
+
+$.get("https://maps.googleapis.com/maps/api/geocode/json?sensor=false&language=en&result_type=locality&latlng="+pos.coords.latitude+","+pos.coords.longitude, "&key="+mapsKey,
+function(data) {
+var city = data.results[0].address_components[0].short_name;
+$('#location .city').text(city);
+});
+
+$.get("https://maps.googleapis.com/maps/api/geocode/json?sensor=false&language=en&result_type=administrative_area_level_1&latlng="+pos.coords.latitude+","+pos.coords.longitude, "&key="+mapsKey,
+function(data) {
+var area = data.results[0].address_components[0].short_name;
+$('#location .area').text(area);
+});
+
+$.get("http://api.openweathermap.org/data/2.5/weather?lat="+pos.coords.latitude+"&lon="+pos.coords.longitude+"&appid="+weatherKey,
+function(data) {
+  var temp = Math.round(data.main.temp - 273.15);
+  $("#weather .temp").text(temp);
+  $("#weather .text").text(data.weather[0].main);
+  var desc = data.weather[0].description;
+  var html;
+  switch(desc) {
+	case 'clear sky':
+	html = '<div class="icon sunny"><div class="sun"><div class="rays"></div></div></div>';
+	break;
+	case 'few clouds':
+	case 'scattered clouds':
+	case 'broken clouds':
+	case 'mist':
+	html = '<div class="icon cloudy"><div class="cloud"></div><div class="cloud"></div></div>';
+	break;
+	case 'shower rain':
+	html = '<div class="icon rainy"><div class="cloud"></div><div class="rain"></div></div>';
+	break;
+	case 'rain':
+	html = '<div class="icon sun-shower"><div class="cloud"></div><div class="sun"><div class="rays"></div></div><div class="rain"></div></div>';
+	break;
+	case 'thunderstorm':
+	html = '<div class="icon thunder-storm"><div class="cloud"></div><div class="lightning"><div class="bolt"></div><div class="bolt"></div></div></div>'
+	break;
+	case 'snow':
+	html = '<div class="icon flurries"><div class="cloud"></div><div class="snow"><div class="flake"></div><div class="flake"></div></div></div>';
+	break;
+  }
+  $('.icon-container').html(html);
+});
+
+}
+</script>
+
+<div id="container">
+<div id="clock">
+<span class="hour"></span><span class="minute"></span>
+</div>
+<div id="location">
+<span class="city"></span>, <span class="area"></span>
+</div>
+<div id="weather">
+<div class="weather-container">
+<span class="text"></span>&nbsp;&nbsp;&nbsp;<span class="temp"></span>
+</div>
+<div class="icon-container"></div>
+</div>
+
+
+<div id="footer">
+<div class="left"><- News</div>
+<div class="right">Extra -></div>
+<div class="bottom"></div>
+</div>
+</container>
+
+</body>
+
+</html>
