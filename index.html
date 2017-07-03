@@ -17,16 +17,54 @@
 $().ready(function(){
   setInterval(function(){
     var currentTime = new Date();
+
     var hr = currentTime.getHours();
     var min = currentTime.getMinutes();
 
     hr = (hr < 10 ? "0" : "") + hr;
     min = (min < 10 ? "0" : "") + min;
+
     $(".hour").text(hr);
     $(".minute").text(min);
-
+    var day_names = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    var month_names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    var day = currentTime.getDay();
+    var month = currentTime.getMonth();
+    var date = currentTime.getDate();
+    var year = currentTime.getFullYear();
+    $("#date .day").text(day_names[day]);
+    $("#date .month").text(month_names[month]);
+    $("#date .date").text(date);
+    var datesuffix = "th";
+    if ((date - (date % 10)) / 10 != 1) {
+    	var suffix = date % 10;
+    	switch (suffix) {
+		case 1:
+		datesuffix = "st";
+		break;
+		case 2:	
+		datesuffix = "nd";
+		break;
+		case 3:
+		datesuffix = "rd";
+		break;
+    	}
+    }
+    var d = new Date();
+    d.setDate(d.getDate()-day);
+    $("#date .datesuffix").text(datesuffix);
+    $("#date .year").text(year);
+    for (var i = 0; i < 7; i++) {
+        var d_ = new Date(d);
+        d_.setDate(d.getDate() + i);
+        $("#date .calendar .cal")[i].textContent = d_.getDate();
+        if (i == day) {
+	   $("#date .calendar .cal")[i].className += " today";
+        }
+    }
   },1000);
 });
+
 
 if(navigator.geolocation) {
  navigator.geolocation.getCurrentPosition(cb);
@@ -37,13 +75,13 @@ function cb(pos) {
 $.get("https://maps.googleapis.com/maps/api/geocode/json?sensor=false&language=en&result_type=locality&latlng="+pos.coords.latitude+","+pos.coords.longitude, "&key="+mapsKey,
 function(data) {
 var city = data.results[0].address_components[0].short_name;
-$('#location .city').text(city);
+$('#weather .city').text(city);
 });
 
 $.get("https://maps.googleapis.com/maps/api/geocode/json?sensor=false&language=en&result_type=administrative_area_level_1&latlng="+pos.coords.latitude+","+pos.coords.longitude, "&key="+mapsKey,
 function(data) {
 var area = data.results[0].address_components[0].short_name;
-$('#location .area').text(area);
+$('#weather .area').text(area);
 });
 
 $.get("http://api.openweathermap.org/data/2.5/weather?lat="+pos.coords.latitude+"&lon="+pos.coords.longitude+"&appid="+weatherKey,
@@ -83,15 +121,42 @@ function(data) {
 </script>
 
 <div id="container">
-<div id="clock">
-<span class="hour"></span><span class="minute"></span>
+<div id="date-container">
+	<div id="clock">
+	<span class="hour"></span><span class="minute"></span>
+	</div>
+	<div id="date">
+	<span class="day"></span>
+	<br>
+	<span class="month"></span>
+	<span class="date"></span><span class="datesuffix"></span>
+	<span class="year"></span>
+	<br>
+	<div class="calendar">
+	   <div class="cal"></div>
+	   <div class="cal"></div>
+	   <div class="cal"></div>
+	   <div class="cal"></div>
+	   <div class="cal"></div>
+	   <div class="cal"></div>
+	   <div class="cal"></div>
+	   <br>
+	   <div class="cal-day">S</div>
+	   <div class="cal-day">M</div>
+	   <div class="cal-day">T</div>
+	   <div class="cal-day">W</div>
+	   <div class="cal-day">T</div>
+	   <div class="cal-day">F</div>
+	   <div class="cal-day">S</div>
+	</div>
+        </div>
 </div>
-<div id="location">
-<span class="city"></span>, <span class="area"></span>
-</div>
+
 <div id="weather">
 <div class="weather-container">
-<span class="text"></span>&nbsp;&nbsp;&nbsp;<span class="temp"></span>
+<span class="city"></span>, <span class="area"></span>
+<br>
+<span class="text"></span><span class="temp"></span>
 </div>
 <div class="icon-container"></div>
 </div>
@@ -102,7 +167,7 @@ function(data) {
 <div class="right">Extra -></div>
 <div class="bottom"></div>
 </div>
-</container>
+</div>
 
 </body>
 
