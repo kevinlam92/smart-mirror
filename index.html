@@ -6,6 +6,7 @@
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
 <script src="res/jquery-ui-1.12.1/jquery-ui.min.js"></script>
 <script src="res/config.js"></script>
+<script src="res/feednami-client-v1.1.js"></script>
 
 
 <link rel="stylesheet" type="text/css" href="res/style.css"/>
@@ -118,6 +119,15 @@ function(data) {
 });
 
 }
+
+  feednami.load("http://rss.cbc.ca/lineup/topstories.xml").then(feed=> {
+  var text;
+  for (let entry of feed.entries) {
+	$('#rss .feedlist').append('<li><p>'+entry.title+'</p></li>');
+  }
+
+ });
+
 </script>
 
 <div id="container">
@@ -161,6 +171,11 @@ function(data) {
 <div class="icon-container"></div>
 </div>
 
+<div id="rss">
+	<ul class="feedlist">
+	</ul>
+</div>
+<div id="rss-after"></div>
 
 <div id="footer">
 <div class="left"><- News</div>
