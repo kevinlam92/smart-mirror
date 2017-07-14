@@ -3,8 +3,9 @@
 <link rel="stylesheet" type="text/css" href="res/weather.css"/>
 <script src="res/jquery-3.2.1.min.js"></script>
 <link rel="stylesheet" href="res/jquery-ui-1.12.1/jquery-ui.min.css"/>
-<link href="https://fonts.googleapis.com/css?family=Open+Sans:100,200,300,400,700" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Lato:100,300" rel="stylesheet">
 <link rel="stylesheet" href="res/font-awesome-4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="res/font-awesome-4.7.0/css/font-awesome-animation.min.css">
 <script src="res/jquery-ui-1.12.1/jquery-ui.min.js"></script>
 <script src="res/jquery.jcarousel.min.js"></script>
 <script src="res/config.js"></script>
@@ -24,114 +25,145 @@ $().ready(function(){
 	}, 1000);
 
 	updateLocation();
+
+	window.onkeyup = handleGesture;
 });
 
 
   feednami.load("https://news.google.com/news/rss/?ned=ca&hl=CA").then(feed => {
-  var titles = new Array();
-  var links = new Array();
-  for (let entry of feed.entries) {
-	$('.rss-carousel ul').append('<li>'+entry.title+'</li>');
-	links.push(entry.link);
-  }
-  $('.rss-carousel').jcarousel({vertical: true, wrap: 'last', animation: {
-        duration: 2000,
-        easing: 'easeInOutCubic'
-    }});
-  setInterval(function() {
-    $('.rss-carousel').jcarousel('scroll', '+=3');
-  }, 10000);
+	  for (let entry of feed.entries) {
+		$('.rss-carousel ul').append('<li><div class="li-center">'+entry.title+'</div></li>');
+	  }
+
+	  $('.rss-carousel').jcarousel({
+	  		vertical: true, 
+	  		wrap: 'circular', 
+	  		animation: {
+		        duration: 2000,
+		        easing: 'easeInOutCubic'
+	 		}
+		});
+
+	  setInterval(function() {
+	    $('.rss-carousel').jcarousel('scroll', '+=1');
+	  }, 10000);
  });
 
 </script>
 
-<div id="container">
-	<div id="date-container">
-		<div id="clock">
-			<span class="hour"></span><span class="minute"></span>
+
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDch2B1Sq3ibLIeYlt-D-pTq-Y8Y3MByuk"
+    async defer></script>
+<div id="viewport">
+	<div id="map-container" class="hidden">
+		<div id="map"></div>
+	</div>
+	<div id="container">
+		<div id="date-container">
+			<div id="clock">
+				<span class="hour"></span><span class="minute"></span>
+			</div>
+			<div id="date">
+				<span class="day"></span>
+
+				<br>
+
+				<span class="month"></span>
+				<span class="date"></span><span class="datesuffix"></span>
+				<span class="year"></span>
+
+				<br>
+
+				<div class="calendar">
+				    <div class="cal"></div>
+				    <div class="cal"></div>
+				    <div class="cal"></div>
+				 	<div class="cal"></div>
+				    <div class="cal"></div>
+				    <div class="cal"></div>
+				    <div class="cal"></div>
+				</div>
+
+				<br>
+
+				<div class="holiday"></div>
+		    </div>
 		</div>
-		<div id="date">
-			<span class="day"></span>
 
-			<br>
+		<div id="weather">
+			<div class="weather-container">
+				<span class="city"></span><span class="area"></span>
 
-			<span class="month"></span>
-			<span class="date"></span><span class="datesuffix"></span>
-			<span class="year"></span>
+				<br>
 
-			<br>
+				<span class="text"></span>
 
-			<div class="calendar">
-			    <div class="cal"></div>
-			    <div class="cal"></div>
-			    <div class="cal"></div>
-			 	<div class="cal"></div>
-			    <div class="cal"></div>
-			    <div class="cal"></div>
-			    <div class="cal"></div>
+				<br>
 
-			    <br>
-
-			    <div class="cal-day">S</div>
-			    <div class="cal-day">M</div>
-			    <div class="cal-day">T</div>
-			    <div class="cal-day">W</div>
-			    <div class="cal-day">T</div>
-			    <div class="cal-day">F</div>
-			    <div class="cal-day">S</div>
+				<span class="temp"></span>
 			</div>
 
-			<br>
-
-			<span class="holiday"></span>
-	    </div>
-	</div>
-
-	<div id="weather">
-		<div class="weather-container">
-			<span class="city"></span><span class="area"></span>
-
-			<br>
-
-			<span class="text"></span>
-
-			<br>
-
-			<span class="temp"></span>
+			<div class="icon-container"></div>
 		</div>
 
-		<div class="icon-container"></div>
-	</div>
+		<div id="mirror-view-area"></div>
 
-	<div id="mirror-view-area"></div>
-
-	<div id="rss">
-		<div class="rss-carousel">
-			<ul>
-			</ul>
-		</div>
-		<div class="rss-carousel-after"></div>
-	</div>
-
-	<div id="footer">
-		<div class="left">
-			<i class="animate-left-1 fa fa-angle-left" aria-hidden="true"></i>
-			<i class="animate-left-2 fa fa-angle-left" aria-hidden="true"></i>
-			<i class="animate-left-3 fa fa-angle-left" aria-hidden="true"></i>
-			News
+		<div id="rss">
+			<div class="rss-carousel">
+				<ul>
+				</ul>
+			</div>
 		</div>
 
-		<div class="right">
-			Weather
-			<i class="animate-right-1 fa fa-angle-right" aria-hidden="true"></i>
-			<i class="animate-right-2 fa fa-angle-right" aria-hidden="true"></i>
-			<i class="animate-right-3 fa fa-angle-right" aria-hidden="true"></i>
-		</div>
 
-		<div class="bottom"></div>
+		</div>
 	</div>
 </div>
+
+		<div id="footer">
+
+			<div class="dock-letterbox-left"></div>
+			<div class="dock">
+				<table class="dock-table">
+				<tr>
+				<td></td>
+				<td><i class="dock-icon fa fa-car" aria-hidden="true"></i></td>
+				<td><i class="dock-icon fa fa-user" aria-hidden="true"></i></td>
+				<td><i class="dock-icon fa fa-sun-o" aria-hidden="true"></i></td>
+				<td></td>
+				</tr>
+				<tr>
+					<td>
+						<i class="animate-left-1 fa fa-angle-left" aria-hidden="true"></i>
+						<i class="animate-left-2 fa fa-angle-left" aria-hidden="true"></i>
+						<i class="animate-left-3 fa fa-angle-left" aria-hidden="true"></i>
+					</td>
+					<td><span class="dock-text dock-traffic">Traffic</span></td>
+					<td></td>
+					<td><span class="dock-text dock-weather">Weather</span></td>
+					<td>
+						<i class="animate-right-1 fa fa-angle-right" aria-hidden="true"></i>
+						<i class="animate-right-2 fa fa-angle-right" aria-hidden="true"></i>
+						<i class="animate-right-3 fa fa-angle-right" aria-hidden="true"></i>
+					</td>
+				</tr>
+				</table>
+
+				<br>
+				<i class="dock-icon fa fa-newspaper-o" aria-hidden="true"></i>
+				<br>
+					<i class="animate-down fa fa-angle-down" aria-hidden="true"></i>
+					<span class="dock-text dock-news">News</span>
+					<i class="animate-down fa fa-angle-down" aria-hidden="true"></i>
+			</div>
+
+
+			<div class="dock-letterbox-right"></div>
+
+		</div>
 
 </body>
 
 </html>
+

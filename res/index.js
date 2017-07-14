@@ -9,6 +9,11 @@ var c_hr;
 var c_min;
 var d_weekstart;
 var d_weekend;
+var c_sunrise;
+var c_sunset;
+var c_map_initalized;
+var c_lat;
+var c_lng;
 
 function updateDateAndTime() {
     var currentTime = new Date();
@@ -95,15 +100,11 @@ function updateLocation() {
 
 function onLocationUpdated(pos) {
     updateWeather(pos.coords.latitude, pos.coords.longitude);
+    c_lat = pos.coords.latitude;
+    c_lng = pos.coords.longitude;
 }
 
 function updateWeather(lat, lon) {
-    $.get("https://maps.googleapis.com/maps/api/geocode/json?sensor=false&language=en&result_type=locality&latlng="+lat+","+lon+"&key="+mapsKey,
-    function(data) {
-        var city = data.results[0].address_components[0].short_name;
-        $('#weather .city').text(city);
-    });
-
     $.get("https://maps.googleapis.com/maps/api/geocode/json?sensor=false&language=en&result_type=locality&latlng="+lat+","+lon+"&key="+mapsKey,
     function(data) {
         var city = data.results[0].address_components[0].short_name;
@@ -175,6 +176,14 @@ function updateWeather(lat, lon) {
                 break;
         }
         $('.icon-container').html(html);
+
+        c_sunrise = data.sys.sunrise;
+        c_sunset = data.sys.sunset;
+    });
+
+    $.get("http://api.openweathermap.org/data/2.5/forecast?lat="+lat+"&lon="+lon+"&appid="+weatherKey,
+    function(data) {
+
     });
 
     $.get("https://maps.googleapis.com/maps/api/geocode/json?sensor=false&language=en&result_type=country&latlng="+lat+","+lon+"&key="+mapsKey,
@@ -194,7 +203,15 @@ function updateWeather(lat, lon) {
 
         $.get("http://kayaposoft.com/enrico/json/v1.0/index.php?action=getPublicHolidaysForMonth&month="+month+"&year="+c_year+"&country=can&region=british-columbia", function(holidays) {
 
+            if (!Array.isArray(holidays)) {
+                holidays = new Array();
+            }
+
             var holiday_text = "";
+            holidays.push({"date":{"day":5,"month":8,"year":c_year},"englishName":"your anniversary"});
+            holidays.push({"date":{"day":16,"month":9,"year":c_year},"englishName":"Trevor's birthday"});
+            holidays.push({"date":{"day":20,"month":12,"year":c_year},"englishName":"Miranda's birthday"});
+            holidays.push({"date":{"day":14,"month":2,"year":c_year},"englishName":"Valentine's day"});
             for (var i = 0; i < holidays.length; i++) {
                 var holiday = holidays[i];
 
@@ -206,7 +223,6 @@ function updateWeather(lat, lon) {
 
                 for (var j = 0; j <= k; j++) {
                     var today = new Date();
-
                     today.setDate(today.getDate() + j);
                     var today_offset = new Date(today);
                     var today_offset_month = today_offset.getMonth() + 1;
@@ -231,5 +247,153 @@ function updateWeather(lat, lon) {
             $("#date .holiday").text(holiday_text);
         });
     });
+}
+
+function handleGesture(event) {
+    var key = event.keyCode ? event.keyCode : event.which;
+
+    switch(key) {
+        case 37:
+            // left
+            showTraffic();
+            break;
+        case 39:
+            // right
+            showHome();
+            break;
+    }
+}
+
+function showTraffic() {
+    $('.fa-car').animate({
+        'color': "#fff"
+    }, 2000);
+    $('.fa-user').animate({
+        'color': "#333"
+    }, 2000);
+    $('.dock-traffic').animate({
+        'color': "#fff"
+    }, 2000);
+    $('#viewport').animate({
+        left: "100%",
+    }, 2000, "easeInOutCubic",
+    function() {
+        $('#map').fadeTo("slow", 1);
+        $('#map-container').removeClass('hidden');
+        if (!c_map_initalized) {
+            initMap();    
+        }
+        $('#container').css("opacity", 0);
+    })
+;}
+
+function showHome() {
+    $('.fa-car').animate({
+        'color': "#333"
+    }, 2000);
+    $('.fa-user').animate({
+        'color': "#fff"
+    }, 2000);
+    $('.dock-traffic').animate({
+        'color': "#333"
+    }, 2000);
+    $('#viewport').animate({
+        left: "0%",
+    }, 2000, "easeInOutCubic",
+    function() {
+        $('#container').fadeTo("slow", 1);
+        $('#map-container').addClass('hidden');
+        $('#map').css("opacity", 0);
+    });
+}
+
+function initMap() {
+        c_map_initalized = true;
+        var head = document.getElementsByTagName('head')[0];
+
+        // Save the original method
+        var insertBefore = head.insertBefore;
+
+        // Replace it!
+        head.insertBefore = function (newElement, referenceElement) {
+
+            if (newElement.href && newElement.href.indexOf('https://fonts.googleapis.com/css?family=Roboto') === 0) {
+
+                console.info('Prevented Roboto from loading!');
+                return;
+            }
+
+            if (newElement.tagName.toLowerCase() === 'style'
+                && newElement.innerHTML
+                && newElement.innerHTML.replace('\r\n', '').indexOf('.gm-style') === 0) {
+                return;
+            }
+
+            insertBefore.call(head, newElement, referenceElement);
+        };
+        // Styles a map in night mode.
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: c_lat, lng: c_lng},
+          streetViewControl: false,
+          zoomControl      : false,
+          panControl       : false,
+          mapTypeControl : false,
+          zoom: 12,
+          styles: [
+            {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
+            {elementType: 'labels.text.stroke', stylers: [{color: '#000000'}]},
+            {elementType: 'labels.text.fill', stylers: [{color: '#ffffff'}]},
+            {
+              featureType: 'administrative',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#ffffff'}]
+            },
+            {
+              featureType: 'landscape',
+              elementType: 'labels',
+              stylers: [{visibility: 'off'}]
+            },
+            {
+              featureType: 'poi',
+              stylers: [{visibility: 'off'}]
+            },
+            {
+              featureType: 'road',
+              elementType: 'geometry',
+              stylers: [{color: '#777777'}]
+            },
+            {
+              featureType: 'road.local',
+              stylers: [{visibility: 'off'}]
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'geometry',
+              stylers: [{color: '#ffffff'}]
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'labels',
+              stylers: [{visibility: 'on'}]
+            },
+            {
+              featureType: 'transit',
+              stylers: [{visibility: 'off'}]
+            },
+            {
+              featureType: 'water',
+              elementType: 'geometry',
+              stylers: [{color: '#17263c'}]
+            },
+            {
+              featureType: 'water',
+              elementType: 'labels',
+              stylers: [{visibility: 'off'}]
+            }
+          ]
+        });
+        var trafficLayer = new google.maps.TrafficLayer();
+        trafficLayer.setMap(map);
+
 
 }
