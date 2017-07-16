@@ -17,6 +17,11 @@ var c_lng;
 
 var c_menu_transitioning = false;
 
+var c_map_loaded;
+var c_container_loaded;
+
+var c_loading = true;
+
 function updateDateAndTime() {
     var currentTime = new Date();
     var hr = currentTime.getHours();
@@ -103,19 +108,21 @@ function updateLocation() {
 }
 
 function onLocationUpdated(pos) {
-    updateWeather(pos.coords.latitude, pos.coords.longitude);
     c_lat = pos.coords.latitude;
     c_lng = pos.coords.longitude;
-    initMap();
+    updateCity(pos.coords.latitude, pos.coords.longitude);
 }
 
-function updateWeather(lat, lon) {
+function updateCity(lat, lon) {
     $.get("https://maps.googleapis.com/maps/api/geocode/json?sensor=false&language=en&result_type=locality&latlng="+lat+","+lon+"&key="+mapsKey,
     function(data) {
         var city = data.results[0].address_components[0].short_name;
         $('#weather .city').text(city);
+        updateWeather(lat, lon);
     });
+}
 
+function updateWeather(lat, lon) {
     $.get("http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lon+"&appid="+weatherKey,
     function(data) {
         var temp = Math.round(data.main.temp - 273.15);
@@ -178,7 +185,11 @@ function updateWeather(lat, lon) {
 
         c_sunrise = data.sys.sunrise;
         c_sunset = data.sys.sunset;
+        updateHoliday();
     });
+}
+
+function updateHoliday() {
 
     var month = c_month + 1;
 
@@ -226,11 +237,12 @@ function updateWeather(lat, lon) {
         
         }
         $("#date .holiday").text(holiday_text);
+        initMap();
     });
 }
 
 function handleGesture(event) {
-    if (c_menu_transitioning) return;
+    if (c_menu_transitioning || $('#loading-screen').is(':visible')) return;
     var key = event.keyCode ? event.keyCode : event.which;
 
     console.log(key);
@@ -257,11 +269,13 @@ function handleGesture(event) {
 
 function showLeft() {
     if ($('#viewport').hasClass('right')) {
+        // center shown
         c_menu_transitioning = true;
         $('#viewport').addClass('center');
         $('.dock-icon.fa-user').addClass('selected');
         $('.dock-icon.fa-sun-o').removeClass('selected');
     } else {
+        // traffic shown
         c_menu_transitioning = true;
         $('#viewport').addClass('left');
         $('.dock-icon.fa-user').removeClass('selected');
@@ -272,11 +286,13 @@ function showLeft() {
 
 function showRight() {
     if ($('#viewport').hasClass('left')) {
+        // center shown
         c_menu_transitioning = true;
         $('#viewport').addClass('center');
         $('.dock-icon.fa-user').addClass('selected');
         $('.dock-icon.fa-car').removeClass('selected');
     } else {
+        // weather shown
         c_menu_transitioning = true;
         $('#viewport').addClass('right');
         $('.dock-icon.fa-user').removeClass('selected');
@@ -289,6 +305,7 @@ function showBottom() {
     if ($('#viewport').hasClass('left') || $('#viewport').hasClass('right')) {
         return;
     } else {
+        // news shown
         c_menu_transitioning = true;
         $('#viewport').addClass('bottom');
         $('.dock-icon.fa-user').removeClass('selected');
@@ -299,6 +316,7 @@ function showBottom() {
 
 function showUp() {
     if ($('#viewport').hasClass('bottom')) {
+        // center shown
         c_menu_transitioning = true;
         $('#viewport').addClass('center');
         $('.dock-icon.fa-user').addClass('selected');
@@ -393,6 +411,10 @@ function initMap() {
         });
         var trafficLayer = new google.maps.TrafficLayer();
         trafficLayer.setMap(map);
+
+        google.maps.event.addListenerOnce(map, 'idle', function() {
+            $('#viewport').trigger('loadend');
+        });
 
 
 }

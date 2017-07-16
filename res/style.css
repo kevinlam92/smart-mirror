@@ -402,3 +402,29 @@ body {
   animation: viewport-right 1s linear;
   animation-fill-mode: forwards;
 }
+
+#loading-screen {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  font-size: 60px;
+  background-color: #000;
+}
+
+.hidden {
+  display: none;
+}
+
+#loading-screen i{
+  width: auto;
+  margin-bottom: 30px;
+}
+
+.icon.paused {
+  animation-play-state: paused !important;
+}

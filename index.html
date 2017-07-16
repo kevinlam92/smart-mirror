@@ -34,6 +34,10 @@ $().ready(function(){
     		// $("#viewport.left.center").removeClass();
     	});
 
+    $('#viewport').on('loadend',
+    	function() {
+    		$('#loading-screen').hide();
+    	});
 });
 
 
@@ -64,6 +68,10 @@ $().ready(function(){
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDch2B1Sq3ibLIeYlt-D-pTq-Y8Y3MByuk"
     async defer></script>
+<div id="loading-screen">
+	<i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
+	<span>Loading...</span>
+</div>
 <div id="viewport">
 	<div id="map"></div>
 	<div id="container">
