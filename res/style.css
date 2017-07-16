@@ -255,7 +255,7 @@ body {
   padding: 10px 20px 10px 20px;
   color: #333;
   font-size: 40px;
-  animation: icon-deselect 1s ease-in-out;
+  animation: icon-deselect 1s linear;
   animation-fill-mode: forwards;
 }
 
@@ -264,7 +264,7 @@ body {
 }
 
 .dock-icon.selected {
-  animation: icon-select 1s ease-in-out;
+  animation: icon-select 1s linear;
   animation-fill-mode: forwards;
 } 
 
@@ -374,31 +374,31 @@ body {
 }
 
 #viewport.left {
-  animation: viewport-left 1s ease-in-out;
+  animation: viewport-left 1s linear;
   animation-fill-mode: forwards;
 }
 
 #viewport.left.center {
-  animation: viewport-center-from-left 1s ease-in-out;
+  animation: viewport-center-from-left 1s linear;
   animation-fill-mode: forwards;
 }
 
 #viewport.right.center {
-  animation: viewport-center-from-right 1s ease-in-out;
+  animation: viewport-center-from-right 1s linear;
   animation-fill-mode: forwards;
 }
 
 #viewport.bottom.center {
-  animation: viewport-center-from-bottom 1s ease-in-out;
+  animation: viewport-center-from-bottom 1s linear;
   animation-fill-mode: forwards;
 }
 
 #viewport.bottom {
-  animation: viewport-bottom 1s ease-in-out;
+  animation: viewport-bottom 1s linear;
   animation-fill-mode: forwards;
 }
 
 #viewport.right {
-  animation: viewport-right 1s ease-in-out;
+  animation: viewport-right 1s linear;
   animation-fill-mode: forwards;
 }
