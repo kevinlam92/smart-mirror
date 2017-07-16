@@ -7,7 +7,6 @@
 <link rel="stylesheet" href="res/font-awesome-4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="res/font-awesome-4.7.0/css/font-awesome-animation.min.css">
 <script src="res/jquery-ui-1.12.1/jquery-ui.min.js"></script>
-<script src="res/jquery.jcarousel.min.js"></script>
 <script src="res/config.js"></script>
 <script src="res/index.js"></script>
 <script src="res/feednami-client-v1.1.js"></script>
@@ -43,18 +42,18 @@ $().ready(function(){
 		$('.rss-carousel ul').append('<li><div class="li-center">'+entry.title+'</div></li>');
 	  }
 
-	  $('.rss-carousel').jcarousel({
-	  		vertical: true, 
-	  		wrap: 'circular', 
-	  		animation: {
-		        duration: 2000,
-		        easing: 'easeInOutCubic'
-	 		}
-		});
+	 //  $('.rss-carousel').jcarousel({
+	 //  		vertical: true, 
+	 //  		wrap: 'circular', 
+	 //  		animation: {
+		//         duration: 2000,
+		//         easing: 'easeInOutCubic'
+	 // 		}
+		// });
 
-	  setInterval(function() {
-	    $('.rss-carousel').jcarousel('scroll', '+=1');
-	  }, 10000);
+	 //  setInterval(function() {
+	 //    $('.rss-carousel').jcarousel('scroll', '+=1');
+	 //  }, 10000);
  });
 
 
