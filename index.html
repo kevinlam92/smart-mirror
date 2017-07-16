@@ -27,6 +27,14 @@ $().ready(function(){
 	updateLocation();
 
 	window.onkeyup = handleGesture;
+
+    $('#viewport').on('animationend', 
+    	function() {
+    		c_menu_transitioning = false;
+    		$("#viewport.center").removeClass();
+    		// $("#viewport.left.center").removeClass();
+    	});
+
 });
 
 
@@ -49,6 +57,8 @@ $().ready(function(){
 	  }, 10000);
  });
 
+
+
 </script>
 
 
@@ -56,9 +66,7 @@ $().ready(function(){
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDch2B1Sq3ibLIeYlt-D-pTq-Y8Y3MByuk"
     async defer></script>
 <div id="viewport">
-	<div id="map-container" class="hidden">
-		<div id="map"></div>
-	</div>
+	<div id="map"></div>
 	<div id="container">
 		<div id="date-container">
 			<div id="clock">
@@ -93,7 +101,7 @@ $().ready(function(){
 
 		<div id="weather">
 			<div class="weather-container">
-				<span class="city"></span><span class="area"></span>
+				<span class="city"></span>
 
 				<br>
 
@@ -127,35 +135,27 @@ $().ready(function(){
 			<div class="dock">
 				<table class="dock-table">
 				<tr>
-				<td></td>
-				<td><i class="dock-icon fa fa-car" aria-hidden="true"></i></td>
-				<td><i class="dock-icon fa fa-user" aria-hidden="true"></i></td>
-				<td><i class="dock-icon fa fa-sun-o" aria-hidden="true"></i></td>
-				<td></td>
+				<td><i class="animate-left-3 fa fa-angle-left" aria-hidden="true"></i></td>
+				<td><i class="dock-icon fa fa-car unselected" aria-hidden="true"></i></td>
+				<td><i class="dock-icon fa fa-user selected" aria-hidden="true"></i></td>
+				<td><i class="dock-icon fa fa-sun-o unselected" aria-hidden="true"></i></td>
+				<td><i class="animate-right-1 fa fa-angle-right" aria-hidden="true"></i></td>
 				</tr>
 				<tr>
-					<td>
-						<i class="animate-left-1 fa fa-angle-left" aria-hidden="true"></i>
-						<i class="animate-left-2 fa fa-angle-left" aria-hidden="true"></i>
-						<i class="animate-left-3 fa fa-angle-left" aria-hidden="true"></i>
-					</td>
-					<td><span class="dock-text dock-traffic">Traffic</span></td>
 					<td></td>
-					<td><span class="dock-text dock-weather">Weather</span></td>
-					<td>
-						<i class="animate-right-1 fa fa-angle-right" aria-hidden="true"></i>
-						<i class="animate-right-2 fa fa-angle-right" aria-hidden="true"></i>
-						<i class="animate-right-3 fa fa-angle-right" aria-hidden="true"></i>
-					</td>
+					<td></td>
+					<td><i class="dock-icon fa fa-newspaper-o unselected" aria-hidden="true"></i></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td></td>
+					<td><i class="animate-down fa fa-angle-down" aria-hidden="true"></i></td>
+					<td></td>
+					<td></td>
 				</tr>
 				</table>
-
-				<br>
-				<i class="dock-icon fa fa-newspaper-o" aria-hidden="true"></i>
-				<br>
-					<i class="animate-down fa fa-angle-down" aria-hidden="true"></i>
-					<span class="dock-text dock-news">News</span>
-					<i class="animate-down fa fa-angle-down" aria-hidden="true"></i>
 			</div>
 
 

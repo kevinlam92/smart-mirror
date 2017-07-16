@@ -49,6 +49,7 @@ body {
 
 #date .day {
   margin-left: 350px;
+  width: 100%;
 }
 
 #date .month {
@@ -112,11 +113,6 @@ body {
   width: 100%;
   text-align: right;
 }
-
-#weather .weather-container .city:after {
-  content: ", ";
-}
-
 
 #weather .weather-container .text {
   display: inline-block;
@@ -244,14 +240,13 @@ body {
   width: 100%;
   height: 100%;
   left: -100%;
-  opacity: 0;
 }
 
 .dock {
   position: relative;
   flex: 1 0px;
   text-align: center;
-  background-color: rgba(0,0,0,1);
+  background-color: rgba(0,0,0,0.5);
   border-radius: 25px;
   padding: 10px;
 }
@@ -260,42 +255,150 @@ body {
   padding: 10px 20px 10px 20px;
   color: #333;
   font-size: 40px;
+  animation: icon-deselect 1s ease-in-out;
+  animation-fill-mode: forwards;
 }
 
-.dock-icon.fa-user {
-  color: #fff;
+.dock-icon.unselected {
+  animation: none;
+}
+
+.dock-icon.selected {
+  animation: icon-select 1s ease-in-out;
+  animation-fill-mode: forwards;
 } 
-
-.bottom {
-  width: 100%;
-  clear: both;
-  text-align: center;
-  margin-bottom: 30px;
-}
 
 #footer span {
   padding-left: 10px;
   padding-right: 10px;
 }
 
-#map-container {
-  display: block;
-}
-
-#map-container.hidden {
-  display: none;
-}
-
 .dock-table {
   display: inline;
   text-align: center;
+  white-space: nowrap;
 }
 
 .dock-text {
   color: #333;
 }
 
+.dock-traffic {
+  vertical-align: text-top;
+}
+
 .dock-letterbox-right,
 .dock-letterbox-left {
   flex: 2 auto;
+}
+
+@keyframes viewport-left {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes viewport-right {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes viewport-center-from-left {
+  0% {
+    transform: translateX(100%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes viewport-center-from-right {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes viewport-bottom {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+
+@keyframes viewport-center-from-bottom {
+  0% {
+    transform: translateY(100%);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes icon-select {
+  0% {
+    color: #333;
+  }
+
+  100% {
+    color: #fff;
+  }
+}
+
+@keyframes icon-deselect {
+  0% {
+    color: #fff;
+  }
+
+  100% {
+    color: #333;
+  }
+}
+
+#viewport.left {
+  animation: viewport-left 1s ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+#viewport.left.center {
+  animation: viewport-center-from-left 1s ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+#viewport.right.center {
+  animation: viewport-center-from-right 1s ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+#viewport.bottom.center {
+  animation: viewport-center-from-bottom 1s ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+#viewport.bottom {
+  animation: viewport-bottom 1s ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+#viewport.right {
+  animation: viewport-right 1s ease-in-out;
+  animation-fill-mode: forwards;
 }

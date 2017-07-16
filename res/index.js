@@ -15,6 +15,8 @@ var c_map_initalized;
 var c_lat;
 var c_lng;
 
+var c_menu_transitioning = false;
+
 function updateDateAndTime() {
     var currentTime = new Date();
     var hr = currentTime.getHours();
@@ -77,10 +79,12 @@ function updateDateAndTime() {
      
         for (var i = 0; i < 7; i++) {
             d_weekstart.setDate(d.getDate() + i);
-            $("#date .calendar .cal")[i].textContent = d_weekstart.getDate();
+            $("#date .calendar .cal").eq(i).text(d_weekstart.getDate());
             
             if (i == day) {
-                $("#date .calendar .cal")[i].className += " today";
+                $("#date .calendar .cal").eq(i).addClass('today');
+            } else {
+                $("#date .calendar .cal").eq(i).removeClass('today');
             }
         }
 
@@ -102,6 +106,7 @@ function onLocationUpdated(pos) {
     updateWeather(pos.coords.latitude, pos.coords.longitude);
     c_lat = pos.coords.latitude;
     c_lng = pos.coords.longitude;
+    initMap();
 }
 
 function updateWeather(lat, lon) {
@@ -109,12 +114,6 @@ function updateWeather(lat, lon) {
     function(data) {
         var city = data.results[0].address_components[0].short_name;
         $('#weather .city').text(city);
-    });
-
-    $.get("https://maps.googleapis.com/maps/api/geocode/json?sensor=false&language=en&result_type=administrative_area_level_1&latlng="+lat+","+lon+"&key="+mapsKey,
-    function(data) {
-        var area = data.results[0].address_components[0].short_name;
-        $('#weather .area').text(area);
     });
 
     $.get("http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lon+"&appid="+weatherKey,
@@ -181,130 +180,130 @@ function updateWeather(lat, lon) {
         c_sunset = data.sys.sunset;
     });
 
-    $.get("http://api.openweathermap.org/data/2.5/forecast?lat="+lat+"&lon="+lon+"&appid="+weatherKey,
-    function(data) {
+    var month = c_month + 1;
 
-    });
+    $.get("http://kayaposoft.com/enrico/json/v1.0/index.php?action=getPublicHolidaysForMonth&month="+month+"&year="+c_year+"&country=can&region=british-columbia", function(holidays) {
 
-    $.get("https://maps.googleapis.com/maps/api/geocode/json?sensor=false&language=en&result_type=country&latlng="+lat+","+lon+"&key="+mapsKey,
-    function(data) {
-        var month = c_month + 1;
-        var country = data.results[0].address_components[0].short_name;
-        switch(country) {
-            case 'CA':
-                country = 'can';
-                break;
-            case 'US':
-                country = 'usa';
-                break;
+        if (!Array.isArray(holidays)) {
+            holidays = new Array();
         }
 
-        var month = c_month + 1;
+        var holiday_text = "";
+        holidays.push({"date":{"day":5,"month":8,"year":c_year},"englishName":"your anniversary"});
+        holidays.push({"date":{"day":16,"month":9,"year":c_year},"englishName":"Trevor's birthday"});
+        holidays.push({"date":{"day":20,"month":12,"year":c_year},"englishName":"Miranda's birthday"});
+        holidays.push({"date":{"day":14,"month":2,"year":c_year},"englishName":"Valentine's day"});
+        for (var i = 0; i < holidays.length; i++) {
+            var holiday = holidays[i];
 
-        $.get("http://kayaposoft.com/enrico/json/v1.0/index.php?action=getPublicHolidaysForMonth&month="+month+"&year="+c_year+"&country=can&region=british-columbia", function(holidays) {
+            var k = 6 - c_day;
 
-            if (!Array.isArray(holidays)) {
-                holidays = new Array();
+            if (k == 0) {
+                k = 1;
             }
 
-            var holiday_text = "";
-            holidays.push({"date":{"day":5,"month":8,"year":c_year},"englishName":"your anniversary"});
-            holidays.push({"date":{"day":16,"month":9,"year":c_year},"englishName":"Trevor's birthday"});
-            holidays.push({"date":{"day":20,"month":12,"year":c_year},"englishName":"Miranda's birthday"});
-            holidays.push({"date":{"day":14,"month":2,"year":c_year},"englishName":"Valentine's day"});
-            for (var i = 0; i < holidays.length; i++) {
-                var holiday = holidays[i];
+            for (var j = 0; j <= k; j++) {
+                var today = new Date();
+                today.setDate(today.getDate() + j);
+                var today_offset = new Date(today);
+                var today_offset_month = today_offset.getMonth() + 1;
+                var today_offset_date = today_offset.getDate();
+                var today_offset_year = today_offset.getFullYear();
 
-                var k = 6 - c_day;
-
-                if (k == 0) {
-                    k = 1;
-                }
-
-                for (var j = 0; j <= k; j++) {
-                    var today = new Date();
-                    today.setDate(today.getDate() + j);
-                    var today_offset = new Date(today);
-                    var today_offset_month = today_offset.getMonth() + 1;
-                    var today_offset_date = today_offset.getDate();
-                    var today_offset_year = today_offset.getFullYear();
-
-                    if (holiday.date.day == today_offset_date && holiday.date.month == today_offset_month && holiday.date.year == today_offset_year) {
-                        if (j == 0) {
-                            holiday_text = "Today is "+holiday.englishName;
-                            break;
-                        } else if (j == 1) {
-                            holiday_text = "Tomorrow is "+holiday.englishName;
-                            break;
-                        } else {
-                            holiday_text = day_names[c_day + j] + " is "+holiday.englishName;
-                            break;
-                        }
+                if (holiday.date.day == today_offset_date && holiday.date.month == today_offset_month && holiday.date.year == today_offset_year) {
+                    if (j == 0) {
+                        holiday_text = "Today is "+holiday.englishName;
+                        break;
+                    } else if (j == 1) {
+                        holiday_text = "Tomorrow is "+holiday.englishName;
+                        break;
+                    } else {
+                        holiday_text = day_names[c_day + j] + " is "+holiday.englishName;
+                        break;
                     }
                 }
-            
             }
-            $("#date .holiday").text(holiday_text);
-        });
+        
+        }
+        $("#date .holiday").text(holiday_text);
     });
 }
 
 function handleGesture(event) {
+    if (c_menu_transitioning) return;
     var key = event.keyCode ? event.keyCode : event.which;
+
+    console.log(key);
 
     switch(key) {
         case 37:
             // left
-            showTraffic();
+            showLeft();
             break;
         case 39:
             // right
-            showHome();
+            showRight();
+            break;
+        case 40:
+            // down
+            showBottom();
+            break;
+        case 38:
+            // up
+            showUp();
             break;
     }
 }
 
-function showTraffic() {
-    $('.fa-car').animate({
-        'color': "#fff"
-    }, 2000);
-    $('.fa-user').animate({
-        'color': "#333"
-    }, 2000);
-    $('.dock-traffic').animate({
-        'color': "#fff"
-    }, 2000);
-    $('#viewport').animate({
-        left: "100%",
-    }, 2000, "easeInOutCubic",
-    function() {
-        $('#map').fadeTo("slow", 1);
-        $('#map-container').removeClass('hidden');
-        if (!c_map_initalized) {
-            initMap();    
-        }
-        $('#container').css("opacity", 0);
-    })
+function showLeft() {
+    if ($('#viewport').hasClass('right')) {
+        c_menu_transitioning = true;
+        $('#viewport').addClass('center');
+        $('.dock-icon.fa-user').addClass('selected');
+        $('.dock-icon.fa-sun-o').removeClass('selected');
+    } else {
+        c_menu_transitioning = true;
+        $('#viewport').addClass('left');
+        $('.dock-icon.fa-user').removeClass('selected');
+        $('.dock-icon.fa-car').removeClass('unselected');
+        $('.dock-icon.fa-car').addClass('selected');
+    }
 ;}
 
-function showHome() {
-    $('.fa-car').animate({
-        'color': "#333"
-    }, 2000);
-    $('.fa-user').animate({
-        'color': "#fff"
-    }, 2000);
-    $('.dock-traffic').animate({
-        'color': "#333"
-    }, 2000);
-    $('#viewport').animate({
-        left: "0%",
-    }, 2000, "easeInOutCubic",
-    function() {
-        $('#container').fadeTo("slow", 1);
-        $('#map-container').addClass('hidden');
-        $('#map').css("opacity", 0);
-    });
+function showRight() {
+    if ($('#viewport').hasClass('left')) {
+        c_menu_transitioning = true;
+        $('#viewport').addClass('center');
+        $('.dock-icon.fa-user').addClass('selected');
+        $('.dock-icon.fa-car').removeClass('selected');
+    } else {
+        c_menu_transitioning = true;
+        $('#viewport').addClass('right');
+        $('.dock-icon.fa-user').removeClass('selected');
+        $('.dock-icon.fa-sun-o').removeClass('unselected');
+        $('.dock-icon.fa-sun-o').addClass('selected');
+    }
+}
+
+function showBottom() {
+    if ($('#viewport').hasClass('left') || $('#viewport').hasClass('right')) {
+        return;
+    } else {
+        c_menu_transitioning = true;
+        $('#viewport').addClass('bottom');
+        $('.dock-icon.fa-user').removeClass('selected');
+        $('.dock-icon.fa-newspaper-o').removeClass('unselected');
+        $('.dock-icon.fa-newspaper-o').addClass('selected');
+    }
+}
+
+function showUp() {
+    if ($('#viewport').hasClass('bottom')) {
+        c_menu_transitioning = true;
+        $('#viewport').addClass('center');
+        $('.dock-icon.fa-user').addClass('selected');
+        $('.dock-icon.fa-newspaper-o').removeClass('selected');
+    }
 }
 
 function initMap() {
