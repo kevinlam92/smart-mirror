@@ -122,32 +122,22 @@ function updateCity(lat, lon) {
     });
 }
 
-function updateWeather(lat, lon) {
-    $.get("http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lon+"&appid="+weatherKey,
-    function(data) {
-        var temp = Math.round(data.main.temp - 273.15);
-        $("#weather .temp").text(temp);
-        $("#weather .text").text(data.weather[0].description);
-        var html;
-        var id = data.weather[0].id;
-        switch(id) {
+function id2Icon(id) {
+ switch(id) {
             case 800:
-                html = '<div class="icon sunny"><div class="sun"><div class="rays"></div></div></div>';
-                break;
+                return '<div class="icon sunny"><div class="sun"><div class="rays"></div></div></div>';
             case 511:
             case 520:
             case 521:
             case 522:
             case 531:
-                html = '<div class="icon rainy"><div class="cloud"></div><div class="rain"></div></div>';
-                break;
+                return '<div class="icon rainy"><div class="cloud"></div><div class="rain"></div></div>';
             case 500:
             case 501:
             case 502:
             case 503:
             case 504:
-                html = '<div class="icon sun-shower"><div class="cloud"></div><div class="sun"><div class="rays"></div></div><div class="rain"></div></div>';
-                break;
+                return '<div class="icon sun-shower"><div class="cloud"></div><div class="sun"><div class="rays"></div></div><div class="rain"></div></div>';
             case 200:
             case 201:
             case 202:
@@ -162,8 +152,7 @@ function updateWeather(lat, lon) {
             case 960:
             case 961:
             case 962:
-                html = '<div class="icon thunder-storm"><div class="cloud"></div><div class="lightning"><div class="bolt"></div><div class="bolt"></div></div></div>'
-                break;
+                return '<div class="icon thunder-storm"><div class="cloud"></div><div class="lightning"><div class="bolt"></div><div class="bolt"></div></div></div>'
             case 600:
             case 601:
             case 602:
@@ -175,16 +164,48 @@ function updateWeather(lat, lon) {
             case 621:
             case 622:
             case 906:
-                html = '<div class="icon flurries"><div class="cloud"></div><div class="snow"><div class="flake"></div><div class="flake"></div></div></div>';
-                break;
+                return '<div class="icon flurries"><div class="cloud"></div><div class="snow"><div class="flake"></div><div class="flake"></div></div></div>';
             default:
-                html = '<div class="icon cloudy"><div class="cloud"></div><div class="cloud"></div></div>';
-                break;
+                return '<div class="icon cloudy"><div class="cloud"></div><div class="cloud"></div></div>';
         }
-        $('.icon-container').html(html);
+}
+
+function updateWeather(lat, lon) {
+    $.get("http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lon+"&appid="+weatherKey,
+    function(data) {
+        var temp = Math.round(data.main.temp - 273.15);
+        $("#weather .temp").text(temp);
+        $("#weather .text").text(data.weather[0].description);
+        var id = data.weather[0].id;        
+        $('.icon-container').html(id2Icon(id));
 
         c_sunrise = data.sys.sunrise;
         c_sunset = data.sys.sunset;
+        updateForecast(lat, lon);
+    });
+}
+
+function updateForecast(lat, lon) {
+    $.get("http://api.openweathermap.org/data/2.5/forecast?lat="+lat+"&lon="+lon+"&appid="+weatherKey,
+    function(data) {
+        var forecast = data.list;
+        for (var i = 0; i < 8; i++) {
+            var entry = forecast[i];
+            var hi = Math.round(entry.main.temp_max - 273.15);
+            var lo = Math.round(entry.main.temp_min - 273.15);
+            var desc = entry.weather[0].description;
+            var id = entry.weather[0].id;
+            $('#forecast .forecast-list').append('<li>'+id2Icon(id)+'<div class="forecast-description"><span class="temp">High: '+hi+'</span><br><span class="temp">Low: '+lo+'</span><br>'+desc+'</div></li>');
+        }
+        for (var i = 8; i < forecast.length; i += 8) {
+            var entry = forecast[i];
+            var hi = Math.round(entry.main.temp_max - 273.15);
+            var lo = Math.round(entry.main.temp_min - 273.15);
+            var desc = entry.weather[0].description;
+            var id = entry.weather[0].id;
+            $('#forecast .forecast-list').append('<li>'+id2Icon(id)+'<div class="forecast-description"><span class="temp">High: '+hi+'</span><br><span class="temp">Low: '+lo+'</span><br>'+desc+'</div></li>');
+        }
+        console.log(forecast);
         updateHoliday();
     });
 }
@@ -415,6 +436,5 @@ function initMap() {
         google.maps.event.addListenerOnce(map, 'idle', function() {
             $('#viewport').trigger('loadend');
         });
-
-
 }
+
