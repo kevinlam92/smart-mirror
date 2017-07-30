@@ -7,9 +7,11 @@
 <link rel="stylesheet" href="res/font-awesome-4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="res/font-awesome-4.7.0/css/font-awesome-animation.min.css">
 <script src="res/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+<script src="res/jquery.jcarousel.min.js"></script>
+<script src="res/feednami-client-v1.1.js"></script>
 <script src="res/config.js"></script>
 <script src="res/index.js"></script>
-<script src="res/feednami-client-v1.1.js"></script>
+
 
 
 <link rel="stylesheet" type="text/css" href="res/style.css"/>
@@ -60,31 +62,6 @@ $().ready(function(){
     		$('#overlay').hide();
     });
 });
-
-
-  feednami.load("https://news.google.com/news/rss/?ned=ca&hl=CA").then(feed => {
-	  for (let entry of feed.entries) {
-	  	var img_src = $('img', $.parseHTML(entry.summary)).attr('src');
-		$('#news .news-list').append('<li><div class="news-container"><div class="news-image"><img src="'+img_src+'"/></div><div class="news-title">'+entry.title+'</div></div><a href="'+entry.link+'"/></li>');
-	  }
-	  $('.news-container').eq(0).toggleClass('selected');
-
-	 //  $('.rss-carousel').jcarousel({
-	 //  		vertical: true, 
-	 //  		wrap: 'circular', 
-	 //  		animation: {
-		//         duration: 2000,
-		//         easing: 'easeInOutCubic'
-	 // 		}
-		// });
-
-	 //  setInterval(function() {
-	 //    $('.rss-carousel').jcarousel('scroll', '+=1');
-	 //  }, 10000);
- });
-
-
-
 </script>
 
 

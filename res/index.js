@@ -22,6 +22,29 @@ var c_container_loaded;
 
 var c_loading = true;
 
+function updateNews() {
+    feednami.load("https://news.google.com/news/rss/?ned=ca&hl=CA").then(feed => {
+      $('.rss-carousel ul').empty();
+      for (let entry of feed.entries) {
+        var img_src = $('img', $.parseHTML(entry.summary)).attr('src');
+        $('.rss-carousel ul').append('<li><div class="li-center">'+entry.title+'</div></li>');
+      }
+
+      $('.rss-carousel').jcarousel({
+            vertical: true, 
+            wrap: 'circular', 
+            animation: {
+                duration: 2000,
+                easing: 'easeInOutCubic'
+            }
+        });
+
+      setInterval(function() {
+        $('.rss-carousel').jcarousel('scroll', '+=1');
+      }, 10000);
+ });
+}
+
 function updateDateAndTime() {
     var currentTime = new Date();
     var hr = currentTime.getHours();
@@ -37,6 +60,10 @@ function updateDateAndTime() {
     if (c_hr != hr) {
         $(".hour").text(hr);
         c_hr = hr;
+        if (c_lat != 0 && c_lng != 0) {
+            updateWeather(c_lat, c_lng);    
+        }
+        updateNews();
     }
     
     if (c_min != min) {
@@ -406,6 +433,7 @@ function initMap() {
           panControl       : false,
           mapTypeControl : false,
           zoom: 12,
+          backgroundColor: 'none',
           styles: [
             {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
             {elementType: 'labels.text.stroke', stylers: [{color: '#000000'}]},
