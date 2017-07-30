@@ -31,20 +31,43 @@ $().ready(function(){
     	function() {
     		c_menu_transitioning = false;
     		$("#viewport.center").removeClass();
-    		// $("#viewport.left.center").removeClass();
     	});
 
-    $('#viewport').on('loadend',
+    $('#overlay').on('animationend', 
+    	function() {
+    		c_menu_transitioning = false;
+    		$("#overlay.center").removeClass();
+    		if ($('#overlay').hasClass('left')) {
+    			$('#container').hide();
+    			$('#forecast').hide();
+    			initMap();
+    		} else if ($('#overlay').hasClass('right')) {
+    			$('#container').hide();
+    			$('#forecast').show();
+    			$('#overlay').fadeOut();
+    		} else {
+    			$('#map').empty();
+    			$('#forecast').hide();
+    			$('#container').show();
+    			$('#overlay').fadeOut();
+    		}
+    });
+
+    $('#container').on('loadend',
     	function() {
     		$('#loading-screen').hide();
-    	});
+    		$('#forecast').hide();
+    		$('#overlay').hide();
+    });
 });
 
 
   feednami.load("https://news.google.com/news/rss/?ned=ca&hl=CA").then(feed => {
 	  for (let entry of feed.entries) {
-		$('.rss-carousel ul').append('<li><div class="li-center">'+entry.title+'</div></li>');
+	  	var img_src = $('img', $.parseHTML(entry.summary)).attr('src');
+		$('#news .news-list').append('<li><div class="news-container"><div class="news-image"><img src="'+img_src+'"/></div><div class="news-title">'+entry.title+'</div></div><a href="'+entry.link+'"/></li>');
 	  }
+	  $('.news-container').eq(0).toggleClass('selected');
 
 	 //  $('.rss-carousel').jcarousel({
 	 //  		vertical: true, 
@@ -72,8 +95,19 @@ $().ready(function(){
 	<i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
 	<span>Loading...</span>
 </div>
-<div id="viewport">
-	<div id="map"></div>
+<div id="overlay">
+	<div class="section">
+		Traffic
+	</div>
+	<div class="section">
+		Home
+	</div>
+	<div class="section">
+		Forecast
+	</div>
+</div>
+<div id="map">
+</div>
 	<div id="container">
 		<div id="date-container">
 			<div id="clock">
@@ -101,6 +135,18 @@ $().ready(function(){
 				</div>
 
 				<br>
+
+				<!--div class="calendar">
+				    <div class="cal">S</div>
+				    <div class="cal">M</div>
+				    <div class="cal">T</div>
+				 	<div class="cal">W</div>
+				    <div class="cal">T</div>
+				    <div class="cal">F</div>
+				    <div class="cal">S</div>
+				</div>
+
+				<br-->
 
 				<div class="holiday"></div>
 		    </div>
@@ -139,41 +185,6 @@ $().ready(function(){
 		<ul class='forecast-list'>
 		</ul>
 	</div>
-</div>
-
-		<div id="footer">
-
-			<div class="dock-letterbox-left"></div>
-			<div class="dock">
-				<table class="dock-table">
-				<tr>
-				<td><i class="animate-left-3 fa fa-angle-left" aria-hidden="true"></i></td>
-				<td><i class="dock-icon fa fa-car unselected" aria-hidden="true"></i></td>
-				<td><i class="dock-icon fa fa-user selected" aria-hidden="true"></i></td>
-				<td><i class="dock-icon fa fa-sun-o unselected" aria-hidden="true"></i></td>
-				<td><i class="animate-right-1 fa fa-angle-right" aria-hidden="true"></i></td>
-				</tr>
-				<tr>
-					<td></td>
-					<td></td>
-					<td><i class="dock-icon fa fa-newspaper-o unselected" aria-hidden="true"></i></td>
-					<td></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td></td>
-					<td></td>
-					<td><i class="animate-down fa fa-angle-down" aria-hidden="true"></i></td>
-					<td></td>
-					<td></td>
-				</tr>
-				</table>
-			</div>
-
-
-			<div class="dock-letterbox-right"></div>
-
-		</div>
 
 </body>
 

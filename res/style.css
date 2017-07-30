@@ -9,6 +9,48 @@ body {
   padding: 0 !important;
 }
 
+#overlay {
+  position: fixed;
+  z-index: 5;
+  width: 300%;
+  height: 100%;
+  left: -100%;
+  display: flex;
+  flex-direction: row;
+  font-size: 60px;
+  background-color: #000;
+}
+
+#overlay .section {
+  float: left;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+#overlay.left {
+  animation: viewport-left 1s ease-out;
+  animation-fill-mode: forwards;
+}
+
+#overlay.left.center {
+  animation: viewport-center-from-left 1s ease-out;
+  animation-fill-mode: forwards;
+}
+
+#overlay.right {
+  animation: viewport-right 1s ease-out;
+  animation-fill-mode: forwards;
+}
+
+#overlay.right.center {
+  animation: viewport-center-from-right 1s ease-out;
+  animation-fill-mode: forwards;
+}
+
 #viewport {
   position: fixed;
   width: 100%;
@@ -57,7 +99,7 @@ body {
 }
 
 #date .datesuffix {
-   vertical-align: super;
+   vertical-align: s3er;
    font-size: 0.5em;
 }
 
@@ -235,11 +277,37 @@ body {
   }
 }
 
-#map {
+#traffic {
   position: absolute;
   width: 100%;
   height: 100%;
   left: -100%;
+}
+
+#map {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.loadscreen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  font-size: 60px;
+}
+
+.loadscreen.done {
+  animation: fade-out 1s ease-out;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fade-out {
+  from {opacity: 1;}
+  to {opacity: 0;}
 }
 
 .dock {
@@ -298,7 +366,7 @@ body {
   }
 
   100% {
-    transform: translateX(100%);
+    transform: translateX(100vw);
   }
 }
 
@@ -308,13 +376,13 @@ body {
   }
 
   100% {
-    transform: translateX(-100%);
+    transform: translateX(-100vw);
   }
 }
 
 @keyframes viewport-center-from-left {
   0% {
-    transform: translateX(100%);
+    transform: translateX(100vw);
   }
 
   100% {
@@ -324,7 +392,7 @@ body {
 
 @keyframes viewport-center-from-right {
   0% {
-    transform: translateX(-100%);
+    transform: translateX(-100vw);
   }
 
   100% {
@@ -374,17 +442,17 @@ body {
 }
 
 #viewport.left {
-  animation: viewport-left 1s linear;
+  animation: viewport-left 1s ease-out;
   animation-fill-mode: forwards;
 }
 
 #viewport.left.center {
-  animation: viewport-center-from-left 1s linear;
+  animation: viewport-center-from-left 1s ease-out;
   animation-fill-mode: forwards;
 }
 
 #viewport.right.center {
-  animation: viewport-center-from-right 1s linear;
+  animation: viewport-center-from-right 1s ease-out;
   animation-fill-mode: forwards;
 }
 
@@ -399,7 +467,7 @@ body {
 }
 
 #viewport.right {
-  animation: viewport-right 1s linear;
+  animation: viewport-right 1s ease-out;
   animation-fill-mode: forwards;
 }
 
@@ -407,7 +475,7 @@ body {
   position: fixed;
   height: 100%;
   width: 100%;
-  z-index: 9999;
+  z-index: 100;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -425,15 +493,10 @@ body {
   margin-bottom: 30px;
 }
 
-.icon.paused {
-  animation-play-state: paused !important;
-}
-
 #forecast {
   position: absolute;
   width: 100%;
   height: 100%;
-  left: 100%;
 }
 
 #forecast .forecast-list {
@@ -455,4 +518,72 @@ body {
 
 .temp:after {
   content : "\B0 C";
+}
+
+#news {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: -100%;
+  padding: 30px;
+}
+
+.news-list {
+  overflow: hidden;
+  list-style-type: none;
+  white-space: nowrap;
+  padding: 0;
+  margin: 0;
+}
+
+.news-list li {
+  display: inline-block;
+}
+
+.news-container {
+  width: 300px;
+  height: 100px;
+  display: inline-block;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.news-container.selected {
+  border: 1px solid #fff;
+}
+
+.news-title {
+  float: left;
+  text-overflow: ellipsis;
+  font-size: 20px;
+  color: #fff;
+  width: 188px;
+  height: 100px;
+  margin-left: 10px;
+  white-space: normal;
+}
+
+.news-image {
+  float: left;
+  display: flex;
+  height: 100px;
+  width: 100px;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.news-list li img {
+  width: 100px;
+  height: auto;
+}
+
+#news-content {
+  position: absolute;
+  border: 0;
+  width: 100%;
+  top: 130px;
+  padding-right: 60px;
+  height: 90%;
+  padding-bottom: 30px;
 }

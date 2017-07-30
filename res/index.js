@@ -110,6 +110,7 @@ function updateLocation() {
 function onLocationUpdated(pos) {
     c_lat = pos.coords.latitude;
     c_lng = pos.coords.longitude;
+    console.log("Location loaded");
     updateCity(pos.coords.latitude, pos.coords.longitude);
 }
 
@@ -118,6 +119,7 @@ function updateCity(lat, lon) {
     function(data) {
         var city = data.results[0].address_components[0].short_name;
         $('#weather .city').text(city);
+        console.log("City loaded");
         updateWeather(lat, lon);
     });
 }
@@ -181,6 +183,7 @@ function updateWeather(lat, lon) {
 
         c_sunrise = data.sys.sunrise;
         c_sunset = data.sys.sunset;
+        console.log("Weather loaded");
         updateForecast(lat, lon);
     });
 }
@@ -205,7 +208,7 @@ function updateForecast(lat, lon) {
             var id = entry.weather[0].id;
             $('#forecast .forecast-list').append('<li>'+id2Icon(id)+'<div class="forecast-description"><span class="temp">High: '+hi+'</span><br><span class="temp">Low: '+lo+'</span><br>'+desc+'</div></li>');
         }
-        console.log(forecast);
+        console.log("Forecast loaded");
         updateHoliday();
     });
 }
@@ -258,24 +261,26 @@ function updateHoliday() {
         
         }
         $("#date .holiday").text(holiday_text);
-        initMap();
+        $('#container').trigger('loadend');
     });
 }
 
 function handleGesture(event) {
-    if (c_menu_transitioning || $('#loading-screen').is(':visible')) return;
+    if (c_menu_transitioning || $('#loading-screen').is(':visible') || $('#overlay').is(':visible')) return;
     var key = event.keyCode ? event.keyCode : event.which;
 
     console.log(key);
 
+    $('#overlay').fadeIn();
+
     switch(key) {
         case 37:
             // left
-            showLeft();
+            overlayLeft();
             break;
         case 39:
             // right
-            showRight();
+            overlayRight();
             break;
         case 40:
             // down
@@ -285,6 +290,25 @@ function handleGesture(event) {
             // up
             showUp();
             break;
+        case bla:
+            updateLocation();
+            break;
+    }
+}
+
+function overlayLeft() {
+    if ($('#overlay').hasClass('right')) {
+        $('#overlay').addClass('center');  
+    } else {
+        $('#overlay').addClass('left');  
+    }
+}
+
+function overlayRight() {
+    if ($('#overlay').hasClass('left')) {
+        $('#overlay').addClass('center');  
+    } else {
+        $('#overlay').addClass('right');  
     }
 }
 
@@ -305,8 +329,13 @@ function showLeft() {
     }
 ;}
 
+var c_eq = 0;
 function showRight() {
-    if ($('#viewport').hasClass('left')) {
+    if ($('#viewport').hasClass('bottom')) {
+        $('#news-content').attr('src', $('.news-list li a').eq(c_eq).attr('href'));
+        c_eq++;
+
+    } else if ($('#viewport').hasClass('left')) {
         // center shown
         c_menu_transitioning = true;
         $('#viewport').addClass('center');
@@ -434,7 +463,7 @@ function initMap() {
         trafficLayer.setMap(map);
 
         google.maps.event.addListenerOnce(map, 'idle', function() {
-            $('#viewport').trigger('loadend');
+            $('#overlay').fadeOut();
         });
 }
 
