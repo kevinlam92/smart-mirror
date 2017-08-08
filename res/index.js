@@ -218,14 +218,18 @@ function updateWeather(lat, lon) {
 function updateForecast(lat, lon) {
     $.get("http://api.openweathermap.org/data/2.5/forecast?lat="+lat+"&lon="+lon+"&appid="+weatherKey,
     function(data) {
+		$('#forecast-tList').innerHTML = "";
+		$('#forecast-wList').innerHTML = "";
         var forecast = data.list;
+		var day = 1;
         for (var i = 0; i < 8; i++) {
             var entry = forecast[i];
             var hi = Math.round(entry.main.temp_max - 273.15);
             var lo = Math.round(entry.main.temp_min - 273.15);
             var desc = entry.weather[0].description;
             var id = entry.weather[0].id;
-            $('#forecast .forecast-list').append('<li>'+id2Icon(id)+'<div class="forecast-description"><span class="temp">High: '+hi+'</span><br><span class="temp">Low: '+lo+'</span><br>'+desc+'</div></li>');
+			var hr = ((parseInt(entry.dt_txt.substr(11,2))+16)%24);
+            $('#forecast-tList').append('<li>'+id2Icon(id)+'<div class="forecast-description"><span class="temp">High: <span class="value">'+hi+'</span></span><br><span class="temp">Low: <span class="value">'+lo+'</span></span><br>'+desc+'</div><div class="forecast-time">'+(hr<10?'0':'')+hr+':00</div></li>');
         }
         for (var i = 8; i < forecast.length; i += 8) {
             var entry = forecast[i];
@@ -233,7 +237,8 @@ function updateForecast(lat, lon) {
             var lo = Math.round(entry.main.temp_min - 273.15);
             var desc = entry.weather[0].description;
             var id = entry.weather[0].id;
-            $('#forecast .forecast-list').append('<li>'+id2Icon(id)+'<div class="forecast-description"><span class="temp">High: '+hi+'</span><br><span class="temp">Low: '+lo+'</span><br>'+desc+'</div></li>');
+            $('#forecast-wList').append('<li>'+id2Icon(id)+'<div class="forecast-description"><span class="temp">High: <span class="value">'+hi+'</span></span><br><span class="temp">Low: <span class="value">'+lo+'</span></span><br>'+desc+'</div><div class="forecast-time">Day '+day+'</div></li>');
+			day++;
         }
         console.log("Forecast loaded");
         updateHoliday();

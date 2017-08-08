@@ -501,6 +501,14 @@ body {
   width: 100%;
   height: 100%;
 }
+#forecast .forecast-div{
+	margin: 6em;
+	float: left;
+	width: 90%;
+}
+#forecast .forecast-title {
+	font-size: 38pt;
+}
 
 #forecast .forecast-list {
   list-style-type: none;
@@ -508,10 +516,15 @@ body {
   flex-direction: row;
   justify-content: center;
   text-align: center;
-  font-size: 10px;
-  margin: 0;
+  font-size: 10pt;
+  margin: 5em 0 0 0;
   padding: 0;
-  width: 100%;
+  width: 90%;
+  flex-wrap: wrap;
+}
+#forecast li {
+  display: inline-block;
+  float: left;
 }
 
 .forecast-description {
@@ -519,8 +532,22 @@ body {
   text-transform: capitalize;
 }
 
+.forecast-time {
+	position: relative;
+	top:-10.5em;
+	text-align:left;
+	font-size:30px;
+}
+
 .temp:after {
   content : "\B0 C";
+}
+
+.temp {
+	font-size:20px;
+}
+.temp .value {
+	font-size:30px;
 }
 
 #news {
