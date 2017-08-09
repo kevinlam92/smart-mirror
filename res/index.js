@@ -60,7 +60,7 @@ function updateDateAndTime() {
     if (c_hr != hr) {
         $(".hour").text(hr);
         c_hr = hr;
-        if (c_lat != 0 && c_lng != 0) {
+        if (!c_lat && !c_lng) {
             updateWeather(c_lat, c_lng);    
         }
         updateNews();
@@ -221,15 +221,15 @@ function updateForecast(lat, lon) {
 		$('#forecast-tList').innerHTML = "";
 		$('#forecast-wList').innerHTML = "";
         var forecast = data.list;
-		var day = 1;
         for (var i = 0; i < 8; i++) {
             var entry = forecast[i];
             var hi = Math.round(entry.main.temp_max - 273.15);
             var lo = Math.round(entry.main.temp_min - 273.15);
+	    var avg = Math.round((hi+lo)/2)
             var desc = entry.weather[0].description;
             var id = entry.weather[0].id;
-			var hr = ((parseInt(entry.dt_txt.substr(11,2))+16)%24);
-            $('#forecast-tList').append('<li>'+id2Icon(id)+'<div class="forecast-description"><span class="temp">High: <span class="value">'+hi+'</span></span><br><span class="temp">Low: <span class="value">'+lo+'</span></span><br>'+desc+'</div><div class="forecast-time">'+(hr<10?'0':'')+hr+':00</div></li>');
+	    var hr = ((parseInt(entry.dt_txt.substr(11,2))+16)%24);
+            $('#forecast-tList').append('<li><div class="temp">'+avg+'</div>'+id2Icon(id)+'<div class="forecast-time">'+(hr<10?'0':'')+hr+':00</div></li>');
         }
         for (var i = 8; i < forecast.length; i += 8) {
             var entry = forecast[i];
@@ -237,8 +237,20 @@ function updateForecast(lat, lon) {
             var lo = Math.round(entry.main.temp_min - 273.15);
             var desc = entry.weather[0].description;
             var id = entry.weather[0].id;
-            $('#forecast-wList').append('<li>'+id2Icon(id)+'<div class="forecast-description"><span class="temp">High: <span class="value">'+hi+'</span></span><br><span class="temp">Low: <span class="value">'+lo+'</span></span><br>'+desc+'</div><div class="forecast-time">Day '+day+'</div></li>');
-			day++;
+	    var day_string = "Today";
+            if (i == 16) {
+		day_string = "Tomorrow";
+	    }
+	    
+	    if (i > 16) {
+		var today_ = new Date();
+		today_.setDate(today_.getDate()+((i/8)-1));
+
+		var that_day = new Date(today_);
+
+		day_string = day_names[that_day.getDay()];
+	    }
+            $('#forecast-wList').append('<li>'+id2Icon(id)+'<div class="forecast-description">'+desc+'</div><div class="forecast-time">'+day_string+'</div></li>');
         }
         console.log("Forecast loaded");
         updateHoliday();
@@ -301,10 +313,6 @@ function handleGesture(event) {
     if (c_menu_transitioning || $('#loading-screen').is(':visible') || $('#overlay').is(':visible')) return;
     var key = event.keyCode ? event.keyCode : event.which;
 
-    console.log(key);
-
-    $('#overlay').fadeIn();
-
     switch(key) {
         case 37:
             // left
@@ -314,50 +322,44 @@ function handleGesture(event) {
             // right
             overlayRight();
             break;
-        case 40:
-            // down
-            showBottom();
-            break;
-        case 38:
-            // up
-            showUp();
-            break;
-        case bla:
-            updateLocation();
-            break;
     }
 }
 
 function overlayLeft() {
-    if ($('#overlay').hasClass('right')) {
+    if ($('#overlay').hasClass('left')) {
+	return;
+    } else if ($('#overlay').hasClass('right')) {
+        $('#overlay').fadeIn();
         $('#overlay').addClass('center');  
     } else {
+        $('#overlay').fadeIn();
         $('#overlay').addClass('left');  
     }
 }
 
 function overlayRight() {
-    if ($('#overlay').hasClass('left')) {
+    if ($('#overlay').hasClass('right')) {
+	return;
+    } else if ($('#overlay').hasClass('left')) {
+        $('#overlay').fadeIn();
         $('#overlay').addClass('center');  
     } else {
+        $('#overlay').fadeIn();
         $('#overlay').addClass('right');  
     }
 }
 
 function showLeft() {
-    if ($('#viewport').hasClass('right')) {
+    if ($('#viewport').hasClass('left')) {
+	return
+    } else if ($('#viewport').hasClass('right')) {
         // center shown
         c_menu_transitioning = true;
         $('#viewport').addClass('center');
-        $('.dock-icon.fa-user').addClass('selected');
-        $('.dock-icon.fa-sun-o').removeClass('selected');
     } else {
         // traffic shown
         c_menu_transitioning = true;
         $('#viewport').addClass('left');
-        $('.dock-icon.fa-user').removeClass('selected');
-        $('.dock-icon.fa-car').removeClass('unselected');
-        $('.dock-icon.fa-car').addClass('selected');
     }
 ;}
 

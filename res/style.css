@@ -99,7 +99,7 @@ body {
 }
 
 #date .datesuffix {
-   vertical-align: s3er;
+   vertical-align: super;
    font-size: 0.5em;
 }
 
@@ -163,6 +163,7 @@ body {
 
 #weather .weather-container .temp {
   display: inline-block;
+  font-size: 30px;
 }
 
 #weather .weather-container .temp:after {
@@ -177,7 +178,6 @@ body {
 
 #rss {
   position: absolute;
-  width: 100%;
   text-align: center;
   bottom: 250px;
   padding-right: 30px;
@@ -500,14 +500,24 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
+  background-color: #000;
+  font-size: 30px;
 }
+
 #forecast .forecast-div{
-	margin: 6em;
-	float: left;
-	width: 90%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  height: 40%;
 }
+
 #forecast .forecast-title {
-	font-size: 38pt;
+  margin-top: 50px;
+  text-align: center;
+  font-size: 60px;
+  font-weight: 400;
 }
 
 #forecast .forecast-list {
@@ -516,39 +526,44 @@ body {
   flex-direction: row;
   justify-content: center;
   text-align: center;
-  font-size: 10pt;
-  margin: 5em 0 0 0;
   padding: 0;
-  width: 90%;
+  width: 100%;
   flex-wrap: wrap;
+  z-index: 0;
 }
 #forecast li {
   display: inline-block;
   float: left;
 }
 
+#forecast-tList {
+  font-size: 7px;
+}
+
+#forecast-wList {
+  font-size: 15px;
+}
+
 .forecast-description {
-  font-size: 30px;
   text-transform: capitalize;
+  font-size: 30px;
 }
 
 .forecast-time {
-	position: relative;
-	top:-10.5em;
-	text-align:left;
-	font-size:30px;
+  position: relative;
+  text-align: center;
+  font-size: 30px;
+}
+
+#forecast-tList .temp {
+  margin-top: 30px;
+  font-size: 30px;
 }
 
 .temp:after {
-  content : "\B0 C";
+  content : " \B0 C";
 }
 
-.temp {
-	font-size:20px;
-}
-.temp .value {
-	font-size:30px;
-}
 
 #news {
   position: absolute;
